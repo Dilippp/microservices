@@ -1,4 +1,4 @@
-package com.bookstore.catalog_service;
+package com.bookstore.catalog;
 
 import org.springframework.boot.SpringApplication;
 
