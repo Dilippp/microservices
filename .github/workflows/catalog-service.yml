@@ -27,9 +27,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
-      - name: Make Maven wrapper executable
+      - name: Make mvnw executable
         run: chmod +x mvnw
+        working-directory: ./catalog-service
 
       - name: Build with Maven
         run: ./mvnw -ntp verify
+        working-directory: ./catalog-service
 
