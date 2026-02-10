@@ -1,4 +1,4 @@
-package com.bookstore.order_service;
+package com.bookstore.notification_service;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -8,17 +8,17 @@ import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @TestConfiguration(proxyBeanMethods = false)
-class TestcontainersConfiguration {
+public class ContainersConfig {
 
     @Bean
     @ServiceConnection
     PostgreSQLContainer<?> postgresContainer() {
-        return new PostgreSQLContainer<>(DockerImageName.parse("postgres:16-alpine"));
+        return new PostgreSQLContainer<>(DockerImageName.parse("postgres:18-alpine"));
     }
 
     @Bean
     @ServiceConnection
     RabbitMQContainer rabbitContainer() {
-        return new RabbitMQContainer(DockerImageName.parse("rabbitmq:3.12.11-alpine"));
+        return new RabbitMQContainer(DockerImageName.parse("rabbitmq:4.0.4-alpine"));
     }
 }

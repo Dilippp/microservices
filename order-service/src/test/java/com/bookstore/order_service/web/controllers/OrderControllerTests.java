@@ -24,7 +24,7 @@ class OrderControllerTests extends AbstractIntegrationTest {
     class CreateOrderTests {
         @Test
         void shouldCreateOrderSuccessfully() {
-            mockGetProductByCode("P100", "Product 1", new BigDecimal("25.50"));
+            mockGetProductByCode("P102", "Product 1", new BigDecimal("44.50"));
             var payload =
                     """
                         {
@@ -43,16 +43,15 @@ class OrderControllerTests extends AbstractIntegrationTest {
                             },
                             "items": [
                                 {
-                                    "code": "P100",
+                                    "code": "P102",
                                     "name": "Product 1",
-                                    "price": 25.50,
+                                    "price": 44.50,
                                     "quantity": 1
                                 }
                             ]
                         }
                     """;
             given().contentType(ContentType.JSON)
-                    .header("Authorization", "Bearer " + getToken())
                     .body(payload)
                     .when()
                     .post("/api/orders")
@@ -65,7 +64,6 @@ class OrderControllerTests extends AbstractIntegrationTest {
         void shouldReturnBadRequestWhenMandatoryDataIsMissing() {
             var payload = TestDataFactory.createOrderRequestWithInvalidCustomer();
             given().contentType(ContentType.JSON)
-                    .header("Authorization", "Bearer " + getToken())
                     .body(payload)
                     .when()
                     .post("/api/orders")
@@ -79,7 +77,6 @@ class OrderControllerTests extends AbstractIntegrationTest {
         @Test
         void shouldGetOrdersSuccessfully() {
             List<OrderSummary> orderSummaries = given().when()
-                    .header("Authorization", "Bearer " + getToken())
                     .get("/api/orders")
                     .then()
                     .statusCode(200)
@@ -98,7 +95,6 @@ class OrderControllerTests extends AbstractIntegrationTest {
         @Test
         void shouldGetOrderSuccessfully() {
             given().when()
-                    .header("Authorization", "Bearer " + getToken())
                     .get("/api/orders/{orderNumber}", orderNumber)
                     .then()
                     .statusCode(200)
