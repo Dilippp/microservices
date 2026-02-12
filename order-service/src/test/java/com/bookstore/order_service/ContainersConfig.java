@@ -2,17 +2,23 @@ package com.bookstore.order_service;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 
+import dasniko.testcontainers.keycloak.KeycloakContainer;
+import java.time.Duration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.DynamicPropertyRegistrar;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.RabbitMQContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 import org.wiremock.integrations.testcontainers.WireMockContainer;
 
 @TestConfiguration(proxyBeanMethods = false)
 public class ContainersConfig {
+    static String KEYCLOAK_IMAGE = "quay.io/keycloak/keycloak:24.0.2";
+    static String realmImportFile = "/bookstore-realm.json";
+    static String realmName = "bookstore";
     static WireMockContainer wiremockServer = new WireMockContainer("wiremock/wiremock:3.5.2-alpine");
 
     @Bean
@@ -35,9 +41,21 @@ public class ContainersConfig {
     }
 
     @Bean
-    DynamicPropertyRegistrar dynamicPropertyRegistrar(WireMockContainer wiremockServer) {
+    KeycloakContainer keycloak() {
+        return new KeycloakContainer(KEYCLOAK_IMAGE)
+                .withRealmImportFile(realmImportFile)
+                .withEnv("KC_HEALTH_ENABLED", "true")
+                .withEnv("JAVA_OPTS", "-Xmx512m")
+                .waitingFor(Wait.forHttp("/health/ready").forStatusCode(200).withStartupTimeout(Duration.ofMinutes(2)));
+    }
+
+    @Bean
+    DynamicPropertyRegistrar dynamicPropertyRegistrar(WireMockContainer wiremockServer, KeycloakContainer keycloak) {
         return (registry) -> {
             registry.add("orders.catalog-service-url", wiremockServer::getBaseUrl);
+            registry.add(
+                    "spring.security.oauth2.resourceserver.jwt.issuer-uri",
+                    () -> keycloak.getAuthServerUrl() + "/realms/" + realmName);
         };
     }
 }

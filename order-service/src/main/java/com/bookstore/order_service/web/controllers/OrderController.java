@@ -2,6 +2,7 @@ package com.bookstore.order_service.web.controllers;
 
 import com.bookstore.order_service.domain.OrderNotFoundException;
 import com.bookstore.order_service.domain.OrderService;
+import com.bookstore.order_service.domain.SecurityService;
 import com.bookstore.order_service.domain.models.CreateOrderRequest;
 import com.bookstore.order_service.domain.models.CreateOrderResponse;
 import com.bookstore.order_service.domain.models.OrderDTO;
@@ -27,22 +28,24 @@ class OrderController {
     private static final Logger log = LoggerFactory.getLogger(OrderController.class);
 
     private final OrderService orderService;
+    private final SecurityService securityService;
 
-    OrderController(OrderService orderService) {
+    OrderController(OrderService orderService, SecurityService securityService) {
         this.orderService = orderService;
+        this.securityService = securityService;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     CreateOrderResponse createOrder(@Valid @RequestBody CreateOrderRequest request) {
-        String userName = "dilip";
+        String userName = securityService.getLoginUserName();
         log.info("Creating order for user: {}", userName);
         return orderService.createOrder(userName, request);
     }
 
     @GetMapping
     List<OrderSummary> getOrders() {
-        String userName = "dilip";
+        String userName = securityService.getLoginUserName();
         log.info("Fetching orders for user: {}", userName);
         return orderService.findOrders(userName);
     }
@@ -50,7 +53,7 @@ class OrderController {
     @GetMapping(value = "/{orderNumber}")
     OrderDTO getOrder(@PathVariable(value = "orderNumber") String orderNumber) {
         log.info("Fetching order by id: {}", orderNumber);
-        String userName = "dilip";
+        String userName = securityService.getLoginUserName();
         return orderService
                 .findUserOrder(userName, orderNumber)
                 .orElseThrow(() -> new OrderNotFoundException(orderNumber));
