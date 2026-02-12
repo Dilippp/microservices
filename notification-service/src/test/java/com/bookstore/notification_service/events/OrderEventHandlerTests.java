@@ -31,7 +31,7 @@ class OrderEventHandlerTests extends AbstractIntegrationTest {
     @Autowired
     ApplicationProperties properties;
 
-    Customer customer = new Customer("Siva", "siva@gmail.com", "999999999");
+    Customer customer = new Customer("Dilip", "dilip@gmail.com", "999999999");
     Address address = new Address("addr line 1", null, "Hyderabad", "TS", "500072", "India");
 
     @Test
