@@ -7,13 +7,13 @@ management:
     web:
       exposure:
         include: "*"
- # metrics:
- #   tags:
-    #    application: ${spring.application.name}
-  #tracing:
-    #enabled: false
-  #  sampling:
-     # probability: 1.0
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  tracing:
+    enabled: false
+    sampling:
+      probability: 1.0
 
 spring:
   application:
@@ -41,22 +41,22 @@ spring:
                 - Path=/v3/api-docs/**
               filters:
                 - RewritePath=/v3/api-docs/?(?<segment>.*), /${segment}/v3/api-docs
-       #   discovery:
-       #     locator:
-        #      enabled: true
+          discovery:
+            locator:
+              enabled: true
           globalcors:
             cors-configurations:
               '[/**]':
-                          allowed-origins: "*"
-                          allowed-methods: "*"
-                          allowed-headers: "*"
-                          allow-credentials: false
+                allowed-origins: "*"
+                allowed-methods: "*"
+                allowed-headers: "*"
+                allow-credentials: false
           default-filters:
             - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Methods Access-Control-Allow-Headers RETAIN_FIRST
 
   mvc:
-      problemdetails:
-        enabled: true
+    problemdetails:
+      enabled: true
 
 springdoc:
   swagger-ui:
