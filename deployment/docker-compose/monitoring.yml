@@ -1,4 +1,4 @@
-name: 'microservices-grafana'
+name: 'microservices'
 services:
   prometheus:
     image: prom/prometheus:v2.51.2
